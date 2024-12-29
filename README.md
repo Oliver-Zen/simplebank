@@ -1,1 +1,1 @@
-# simplebank
+# simple bank
