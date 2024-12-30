@@ -1,8 +1,10 @@
 package api
 
 import (
-	"github.com/gin-gonic/gin"
 	db "github.com/Oliver-Zen/simplebank/db/sqlc"
+	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/go-playground/validator/v10"
 )
 
 // `Server` servers HTTP requests for our banking service.
@@ -16,10 +18,19 @@ func NewServer(store db.Store) *Server {
 	server := &Server{store: store}
 	router := gin.Default()
 
+	// register our custom validator with Gin.
+	// `binding.Validator.Engine()` gets the current validator engine the gin is using.
+	// `(*validator.Validate)` converts output to a validator.Validate pointer.
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		v.RegisterValidation("currency", validCurrency)
+	}
+
 	// add routes to router
 	router.POST("/accounts", server.createAccount) // last func is the real handlers, others are middleware
 	router.GET("/accounts/:id", server.getAccount) // `:` tells Gin `id` is a URI parameter
 	router.GET("/accounts", server.listAccount)
+
+	router.POST("/transfers", server.createTransfer) // "register a new API in the server to route request to handler `createTransfer`"
 
 	server.router = router
 	return server

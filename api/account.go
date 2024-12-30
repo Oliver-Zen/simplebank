@@ -9,9 +9,9 @@ import (
 )
 
 type createAccountRequest struct {
-	// client input validation
-	Owner    string `json:"owner" binding:"required"`
-	Currency string `json:"currency" binding:"required,oneof=USD EUR CAD"` // be careful of usage (no sapce!)
+	Owner    string `json:"owner" binding:"required"` // client input validation
+	// Currency string `json:"currency" binding:"required,oneof=USD EUR CAD"` // be careful of usage (no sapce!)
+	Currency string `json:"currency" binding:"required,currency"` // be careful of usage (no sapce!)
 }
 
 // WHY `ctx`? In Gin, every HandlerFunc has `*Context` as input.

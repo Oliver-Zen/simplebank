@@ -69,7 +69,7 @@ type TransferTxResult struct {
 // var txKey = struct{}{} // txKey is a unique context key for transaction metadata.
 
 // TransferTx performs a money transfer from one account to the other.
-// It creates the transfer, add account entries, and update accounts' balance within a database transaction
+// It creates the transfer, add account entries, and update accounts' balance within a database transaction.
 func (store *SQLStore) TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error) {
 	var result TransferTxResult // Initialize the result structure to store transaction details
 
