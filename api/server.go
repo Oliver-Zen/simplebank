@@ -20,7 +20,7 @@ func NewServer(store db.Store) *Server {
 
 	// register our custom validator with Gin.
 	// `binding.Validator.Engine()` gets the current validator engine the gin is using.
-	// `(*validator.Validate)` converts output to a validator.Validate pointer.
+	// `(*validator.Validate)` converts output to a validator.Validate pointer so we can access its methods.
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		v.RegisterValidation("currency", validCurrency)
 	}
