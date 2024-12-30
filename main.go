@@ -5,9 +5,9 @@ import (
 	"log"
 
 	_ "github.com/lib/pq" // WHY blank lib/pq? to let app talk to databse
-	"github.com/techschool/simplebank/api"
-	db "github.com/techschool/simplebank/db/sqlc"
-	"github.com/techschool/simplebank/util"
+	"github.com/Oliver-Zen/simplebank/api"
+	db "github.com/Oliver-Zen/simplebank/db/sqlc"
+	"github.com/Oliver-Zen/simplebank/util"
 )
 
 // const (

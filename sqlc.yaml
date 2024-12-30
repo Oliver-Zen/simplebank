@@ -7,7 +7,9 @@ packages:
     engine: "postgresql"
     sql_package: "database/sql"
     emit_prepared_queries: false
-    emit_interface: false
+    # WHY `emit_interface: true`? To define `Store` interface easily. 
+    # Otherwise need to copy & paste every DB CRUD func into `Store`.
+    emit_interface: true
     emit_exact_table_names: false
     # WHY `emit_exact_table_names: true` is bad 👎 (confusing)?
     # because if so then `table accounts` in SQL will generate `Accounts struct` in Golang

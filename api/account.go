@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"net/http"
 
+	db "github.com/Oliver-Zen/simplebank/db/sqlc"
 	"github.com/gin-gonic/gin"
-	db "github.com/techschool/simplebank/db/sqlc"
 )
 
 type createAccountRequest struct {
@@ -59,6 +59,9 @@ func (server *Server) getAccount(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
+
+	// account := db.Account{} // to understand mockDB: `Times(1)`
+	// account = db.Account{}  // to understand mockDB: `requireBodyMatchAccount`
 
 	ctx.JSON(http.StatusOK, account)
 }

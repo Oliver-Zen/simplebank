@@ -6,22 +6,30 @@ import (
 	"fmt"
 )
 
-// Store provides all functions to execute db queries and transaction
-type Store struct {
+// Store provides all functions to execute [DB] queries and transaction.
+// Store is created for gomock
+type Store interface {
+	Querier
+	TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error)
+}
+
+// SQLStore provides all functions to execute [SQL] queries and transaction.
+// SQLStore is a real implementation of `Store` interface that talks to PostgreSQL.
+type SQLStore struct {
 	*Queries // Struct Embedding
 	db       *sql.DB
 }
 
-// NewStore creates a new store
-func NewStore(db *sql.DB) *Store {
-	return &Store{
+// NewStore creates a new SQLStore object.
+func NewStore(db *sql.DB) Store {
+	return &SQLStore{
 		db:      db,
 		Queries: New(db),
 	}
 }
 
-// ExecTx executes a function within a database transaction
-func (store *Store) execTx(ctx context.Context, fn func(*Queries) error) error {
+// ExecTx executes a function within a database transaction.
+func (store *SQLStore) execTx(ctx context.Context, fn func(*Queries) error) error {
 
 	tx, err := store.db.BeginTx(ctx, nil) // Start a database transaction with the provided context
 	if err != nil {
@@ -62,7 +70,7 @@ type TransferTxResult struct {
 
 // TransferTx performs a money transfer from one account to the other.
 // It creates the transfer, add account entries, and update accounts' balance within a database transaction
-func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error) {
+func (store *SQLStore) TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error) {
 	var result TransferTxResult // Initialize the result structure to store transaction details
 
 	// Execute the transaction logic within a database transaction
