@@ -14,7 +14,7 @@ type createAccountRequest struct {
 	Currency string `json:"currency" binding:"required,oneof=USD EUR CAD"` // be careful of usage (no sapce!)
 }
 
-// WHY `ctx`? in Gin, every HandlerFunc has `*Context` as input
+// WHY `ctx`? In Gin, every HandlerFunc has `*Context` as input.
 func (server *Server) createAccount(ctx *gin.Context) {
 	var req createAccountRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil { // bad request
@@ -35,7 +35,7 @@ func (server *Server) createAccount(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, account)
 }
 
-// WHAT Binding? the process of automatically mapping incoming HTTP request data (e.g., JSON, query params) to a Go struct
+// WHAT Binding? The process of automatically mapping incoming HTTP request data (e.g., JSON, query params) to a Go struct.
 type getAccountRequest struct {
 	ID int64 `uri:"id" binding:"required,min=1"`
 }
@@ -68,8 +68,8 @@ type listAccountRequest struct {
 	PageSize int32 `form:"page_size" binding:"required,min=5,max=10"`
 }
 
-// WHAT Pagination? divide the records into multiple pages of small size; achieve this by [query params]
-// WHY called [query]? because the question mark in URL
+// WHAT Pagination? Divide the records into multiple pages of small size; achieve this by [query params].
+// WHY called [query]? Because the question mark in URL.
 // [query param] === [URL param]
 func (server *Server) listAccount(ctx *gin.Context) {
 	var req listAccountRequest
