@@ -35,6 +35,9 @@ func (server *Server) createUser(ctx *gin.Context) {
 	}
 
 	hashedPassword, err := util.HashPassword(req.Password)
+	// HOW `CreateUser(gomock.Any(), gomock.Any())` weaken the test? (2)
+	// hashedPassword, err = util.HashPassword("xyz") // an invalid password
+	// expect fail (but pass before using custom gomock matcher)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err)) // internal error
 		return
@@ -46,6 +49,10 @@ func (server *Server) createUser(ctx *gin.Context) {
 		FullName:       req.FullName,
 		Email:          req.Email,
 	}
+
+	// HOW `CreateUser(gomock.Any(), gomock.Any())` weaken the test? (1) 
+	// arg = db.CreateUserParams{} // expect fail (but pass before using custom gomock matcher)
+
 	user, err := server.store.CreateUser(ctx, arg)
 	if err != nil { // internal issue (req validated already)
 		// handle DB error(s)

@@ -103,8 +103,11 @@ func TestGetAccountAPI(t *testing.T) {
 
 			// start test server and send request
 			server := NewServer(store)
-			recorder := httptest.NewRecorder() // don't have to start a new real HTTP server
+			recorder := httptest.NewRecorder()
+			// Creates an in-memory HTTP response recorder for testing HTTP handlers. 
+			// It captures the handler's response (status code, headers, body) without starting a real HTTP server.
 
+			// url := fmt.Sprintf("/accounts/%d", account.ID) // will causes [InvalidID] test case fails
 			url := fmt.Sprintf("/accounts/%d", tc.accountID)
 			request, err := http.NewRequest(http.MethodGet, url, nil)
 			require.NoError(t, err)
