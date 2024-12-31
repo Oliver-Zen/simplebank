@@ -6,10 +6,11 @@ import (
 
 	db "github.com/Oliver-Zen/simplebank/db/sqlc"
 	"github.com/gin-gonic/gin"
+	"github.com/lib/pq"
 )
 
 type createAccountRequest struct {
-	Owner    string `json:"owner" binding:"required"` // client input validation
+	Owner string `json:"owner" binding:"required"` // client input validation
 	// Currency string `json:"currency" binding:"required,oneof=USD EUR CAD"` // be careful of usage (no sapce!)
 	Currency string `json:"currency" binding:"required,currency"` // be careful of usage (no sapce!)
 }
@@ -29,6 +30,18 @@ func (server *Server) createAccount(ctx *gin.Context) {
 	}
 	account, err := server.store.CreateAccount(ctx, arg)
 	if err != nil { // internal issue (req validated already)
+		// handle DB error(s)
+		if pqErr, ok := err.(*pq.Error); ok {
+			// `err.(*pq.Error)`: Attempts to convert `err` (an error interface) into a *pq.Error.
+			// `ok`: A boolean indicating whether the type assertion was successful.
+			// log.Println(pqErr.Code.Name())
+			switch pqErr.Code.Name() {
+			case "foreign_key_violation", "unique_violation":
+				// WHAT is 403 Forbidden? Server understands the request but refuses to authorize it
+				ctx.JSON(http.StatusForbidden, errorResponse(err)) // send response
+				return
+			}
+		}
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err)) // send response
 		return
 	}

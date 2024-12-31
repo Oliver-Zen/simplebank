@@ -4,7 +4,8 @@ import (
 	"database/sql"
 	"log"
 
-	_ "github.com/lib/pq" // WHY blank lib/pq? to let app talk to databse
+	_ "github.com/lib/pq" // For database/sql package to use the driver (`pq`) internally to connect to PostgreSQL.
+
 	"github.com/Oliver-Zen/simplebank/api"
 	db "github.com/Oliver-Zen/simplebank/db/sqlc"
 	"github.com/Oliver-Zen/simplebank/util"
