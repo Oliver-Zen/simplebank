@@ -25,12 +25,13 @@ func NewServer(store db.Store) *Server {
 		v.RegisterValidation("currency", validCurrency)
 	}
 
+	// "register new API in the server to route request to handler"
 	// add routes to router
+	router.POST("/users", server.createUser)
 	router.POST("/accounts", server.createAccount) // last func is the real handlers, others are middleware
 	router.GET("/accounts/:id", server.getAccount) // `:` tells Gin `id` is a URI parameter
 	router.GET("/accounts", server.listAccount)
-
-	router.POST("/transfers", server.createTransfer) // "register a new API in the server to route request to handler `createTransfer`"
+	router.POST("/transfers", server.createTransfer) 
 
 	server.router = router
 	return server
