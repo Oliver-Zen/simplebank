@@ -33,6 +33,8 @@ func (anyMatcher) String() string {
 }*/
 
 type eqCreateUserParamsMatcher struct {
+	// the expected parameters
+	
 	// x interface{}
 	arg      db.CreateUserParams
 	password string
@@ -40,6 +42,8 @@ type eqCreateUserParamsMatcher struct {
 
 // to implement `Matcher`, should maintain the signature of `Mateches`
 func (e eqCreateUserParamsMatcher) Matches(x interface{}) bool {
+	// `x` is the actual argument passed to the mocked `CreateUser` method.
+	
 	// convert input param `x` (interface) to `db.CreateUserParams`
 	arg, ok := x.(db.CreateUserParams)
 	if !ok {
