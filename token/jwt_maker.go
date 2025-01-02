@@ -73,8 +73,8 @@ func (maker *JWTMaker) VerifyToken(token string) (*Payload, error) {
 
 		// Match error message directly for expiration
 		if strings.Contains(err.Error(), jwt.ErrTokenExpired.Error()) {
-			// return nil, ErrExpiredToken // Return your custom ErrExpiredToken
-			return nil, jwt.ErrTokenExpired // Return your custom ErrExpiredToken
+			return nil, ErrExpiredToken
+			// return nil, jwt.ErrTokenExpired
 		}
 		return nil, ErrInvalidToken
 		// return nil, jwt.ErrTokenInvalidClaims
