@@ -92,8 +92,8 @@ type loginUserRequest struct {
 }
 
 type loginUserResponse struct {
-	AccessToken string       `json:""access_token"`
-	User        userResponse `json:"user"`
+	AccessToken string       `json:"access_token" binding:"required,alphanum"`
+	User        userResponse `json:"user" binding:"required,min=6"`
 }
 
 func (server *Server) loginUser(ctx *gin.Context) {
@@ -135,5 +135,5 @@ func (server *Server) loginUser(ctx *gin.Context) {
 		User:        newUserResponse(user),
 	}
 	ctx.JSON(http.StatusOK, res)
-	return
+	// return // redundent return statement
 }
