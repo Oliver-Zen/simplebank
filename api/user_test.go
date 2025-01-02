@@ -199,6 +199,7 @@ func TestCreateUserAPI(t *testing.T) {
 			recorder := httptest.NewRecorder()
 
 			// Marshal body data to JSON
+			// Marshal: convert Go data structure into a serialized format (e.g., JSON, XML) for storage or transmission
 			data, err := json.Marshal(tc.body)
 			require.NoError(t, err)
 
