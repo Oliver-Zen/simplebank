@@ -42,19 +42,23 @@ func NewServer(config util.Config, store db.Store) (*Server, error) {
 	return server, nil
 }
 
-
 // SetupRouter adds routes to `router`.
 func (server *Server) setupRouter() {
 	router := gin.Default()
 
 	// "register new API in the server to route request to handler"
+	
+	// create user & login user don't need authorization
 	router.POST("/users", server.createUser)
 	router.POST("/users/login", server.loginUser)
 
-	router.POST("/accounts", server.createAccount) // last func is the real handlers, others are middleware
-	router.GET("/accounts/:id", server.getAccount) // `:` tells Gin `id` is a URI parameter
-	router.GET("/accounts", server.listAccount)
-	router.POST("/transfers", server.createTransfer)
+	// all other APIs must be protected by authMiddlware
+	authRoutes := router.Group("/").Use(authMiddleware(server.tokenMaker))
+	
+	authRoutes.POST("/accounts", server.createAccount) // last func is the real handlers, others are middleware
+	authRoutes.GET("/accounts/:id", server.getAccount) // `:` tells Gin `id` is a URI parameter
+	authRoutes.GET("/accounts", server.listAccount)
+	authRoutes.POST("/transfers", server.createTransfer)
 
 	server.router = router
 }
@@ -65,7 +69,7 @@ func (server *Server) Start(address string) error {
 	return server.router.Run(address)
 }
 
-// `H` is shortcut for `map[string]any`
 func errorResponse(err error) gin.H {
+	// `H` is shortcut for `map[string]any`
 	return gin.H{"error": err.Error()}
 }
