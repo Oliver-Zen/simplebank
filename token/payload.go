@@ -11,7 +11,7 @@ import (
 // Different types of error returned by the VerifyToken function
 var (
 	ErrInvalidToken = errors.New("token is invalid")
-	// ErrExpiredToken = errors.New("token has expired")
+	ErrExpiredToken = errors.New("token has expired")
 )
 
 // Payload contains the payload data of the token.
@@ -77,11 +77,12 @@ func NewPayload(username string, duration time.Duration) (*Payload, error) {
 	return payload, err
 }
 
-// Valid checks if the token payload is valid or not
+// Valid checks if the token payload is valid or not.
+// Specficially, it checks whether the token is expeired or not.
 func (payload *Payload) Valid() error {
 	if time.Now().After(payload.ExpiredAt) {
-		// return ErrExpiredToken
-		return jwt.ErrTokenExpired
+		return ErrExpiredToken
+		// return jwt.ErrTokenExpired
 	}
 	return nil
 }
