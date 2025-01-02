@@ -48,6 +48,7 @@ jobs:
       uses: actions/setup-go@v4
       with:
         go-version: '1.23'
+        # go-version: ^1.23
       id: go # unique identifier of this step
       
     # missing libraries will be automatically downloaded
