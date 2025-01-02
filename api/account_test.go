@@ -102,7 +102,7 @@ func TestGetAccountAPI(t *testing.T) {
 			tc.buildStubs(store)
 
 			// start test server and send request
-			server := NewServer(store)
+			server := newTestServer(t, store)
 			recorder := httptest.NewRecorder()
 			// Creates an in-memory HTTP response recorder for testing HTTP handlers. 
 			// It captures the handler's response (status code, headers, body) without starting a real HTTP server.
