@@ -141,6 +141,8 @@ func requireBodyMatchAccount(t *testing.T, body *bytes.Buffer, account db.Accoun
 
 	var gotAccount db.Account
 	err = json.Unmarshal(data, &gotAccount)
+	// Unmarshal: parsing serialized data (e.g., JSON, XML) into a Go data structure for use in the program.
+	
 	require.NoError(t, err)
 	require.Equal(t, account, gotAccount)
 }

@@ -233,6 +233,7 @@ func requireBodyMatchUser(t *testing.T, body *bytes.Buffer, user db.User) {
 
 	var gotUser db.User
 	err = json.Unmarshal(data, &gotUser)
+	// Unmarshal: parsing serialized data (e.g., JSON, XML) into a Go data structure for use in the program.
 
 	require.NoError(t, err)
 	require.Equal(t, user.Username, gotUser.Username)

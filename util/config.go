@@ -26,5 +26,6 @@ func LoadConfig(path string) (config config, err error) {
 	}
 
 	err = viper.Unmarshal(&config)
+	// Unmarshal: parsing serialized data (e.g., JSON, XML) into a Go data structure for use in the program.
 	return
 }
