@@ -98,9 +98,11 @@ type loginUserResponse struct {
 
 func (server *Server) loginUser(ctx *gin.Context) {
 	var req loginUserRequest
-	// WHY cannot ctx.ShouldBindJSON(&req)?
+	// WHY cannot ctx.ShouldBindJSON(req)?
+	// see docs
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		// `ShouldBindJSON` populates the `Username` and `Email` fields in `req` based on the JSON keys and values.
+		ctx.JSON(http.StatusBadRequest, errorResponse(err)) 
 		return
 	}
 
