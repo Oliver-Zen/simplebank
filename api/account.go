@@ -2,20 +2,25 @@ package api
 
 import (
 	"database/sql"
+	"errors"
 	"net/http"
 
 	db "github.com/Oliver-Zen/simplebank/db/sqlc"
+	"github.com/Oliver-Zen/simplebank/token"
 	"github.com/gin-gonic/gin"
 	"github.com/lib/pq"
 )
 
 type createAccountRequest struct {
-	Owner string `json:"owner" binding:"required"` // client input validation
-	// Currency string `json:"currency" binding:"required,oneof=USD EUR CAD"` // be careful of usage (no sapce!)
 	Currency string `json:"currency" binding:"required,currency"` // be careful of usage (no sapce!)
+
+	// A User should only be able to create Account for him/herself
+	// Owner string `json:"owner" binding:"required"` // client input validation
+	// Currency string `json:"currency" binding:"required,oneof=USD EUR CAD"` // be careful of usage (no sapce!)
 }
 
 // WHY `ctx`? In Gin, every HandlerFunc has `*Context` as input.
+// Authorization Rule for Create Account API: A logged-in user can only create an account for him/herself.
 func (server *Server) createAccount(ctx *gin.Context) {
 	var req createAccountRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil { // bad request
@@ -23,8 +28,12 @@ func (server *Server) createAccount(ctx *gin.Context) {
 		return
 	}
 
+	// get the username stored in header
+	// MustGet return a general interface (any, aka. interface{})
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 	arg := db.CreateAccountParams{
-		Owner:    req.Owner,
+		// Owner:    req.Owner,
+		Owner:    authPayload.Username,
 		Currency: req.Currency,
 		Balance:  0,
 	}
@@ -48,7 +57,9 @@ func (server *Server) createAccount(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, account)
 }
 
-// WHAT Binding? The process of automatically mapping incoming HTTP request data (e.g., JSON, query params) to a Go struct.
+// WHAT is Binding?
+// The process of automatically mapping incoming HTTP request data (e.g., JSON, query params) to a Go struct.
+// Authorization Rule for Get Account API: A logged-in user can only get accounts that he/she owns.
 type getAccountRequest struct {
 	ID int64 `uri:"id" binding:"required,min=1"`
 }
@@ -76,6 +87,14 @@ func (server *Server) getAccount(ctx *gin.Context) {
 	// account := db.Account{} // to understand mockDB: `Times(1)`
 	// account = db.Account{}  // to understand mockDB: `requireBodyMatchAccount`
 
+	// authorization
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+	if account.Owner != authPayload.Username {
+		err := errors.New("account doesn't belong to the authenticated user")
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
+		return
+	}
+
 	ctx.JSON(http.StatusOK, account)
 }
 
@@ -87,6 +106,7 @@ type listAccountRequest struct {
 // WHAT Pagination? Divide the records into multiple pages of small size; achieve this by [query params].
 // WHY called [query]? Because the question mark in URL.
 // [query param] === [URL param]
+// Authorization Rule for List Account API: A logged-in user can only list accounts that he/she owns.
 func (server *Server) listAccount(ctx *gin.Context) {
 	var req listAccountRequest
 	if err := ctx.ShouldBindQuery(&req); err != nil {
@@ -96,7 +116,10 @@ func (server *Server) listAccount(ctx *gin.Context) {
 		return
 	}
 
+	// authorization
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 	arg := db.ListAccountsParams{
+		Owner:  authPayload.Username,
 		Limit:  req.PageSize, // WHAT `Limist`? 限制返回的【总条数】
 		Offset: (req.PageID - 1) * req.PageSize,
 	}

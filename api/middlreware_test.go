@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// addAuthorization creates a new access token and add it to the authorization header of the [req]
+// addAuthorization creates a new access token and add it to the authorization header of the [request]
 func addAuthorization(
 	t *testing.T,
 	request *http.Request,
