@@ -1,0 +1,31 @@
+# version: "3.9"
+
+services:
+  postgres:
+    image: postgres:12-alpine # user pre-built docker image
+    environment: # to specify env var
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=simple_bank
+
+  api:
+    # Defines the API service for handling requests to Simple Bank
+    build:
+      # Build the Go application into a Docker image using Dockerfile in the current directory
+      context: . # specify context to build the img, current root folder
+      dockerfile: Dockerfile # where to find Dockerfile to build the img
+    ports:
+      # Publish container port 8080 to host port 8080, so external clients can reach the API (from outside of container)
+      - "8080:8080"
+    environment:
+      - DB_SOURCE=postgresql://root:secret@postgres:5432/simple_bank?sslmode=disable
+      # Connection string for PostgreSQL; overrides any default in app.env
+      # All services in docker-compose will run on the same network.
+      # Services on the same Docker network can refer to each other by name (here, "postgres").
+    depends_on:
+      # start the server only after postgres is ready
+      # otherwise the server exit immediately (since it cannot connect to db)
+      - postgres
+    entrypoint: [ "/app/wait-for.sh", "postgres:5432", "--", "/app/start.sh" ]
+    command: [ "/app/main" ]
+      
