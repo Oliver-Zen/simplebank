@@ -20,7 +20,7 @@ For database, REATful APIs, deployment, and more:
 ![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-%236E7781.svg?style=for-the-badge&logo=githubactions&logoColor=white)
 ![Redis](https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white)
 
-## 🚀 Features
+## 🚀 API Features
 
 - **Account Management**: Create, view, and manage user accounts with details such as owner’s name, balance, and currency.
 - **Transaction History**: Automatically record all balance changes to maintain a detailed transaction history for each account.
