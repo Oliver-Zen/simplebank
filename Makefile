@@ -2,7 +2,7 @@ postgres:
 # Start a PostgreSQL container with port mapping (5432:5432) 
 # and set `root` as the superuser. PostgreSQL automatically creates a `root` database for the superuser.
 # 使用 POSTGRES_USER=root 启动容器，PostgreSQL 会自动创建一个与「超级用户」同名的数据库 root
-	docker run --name postgres12 -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres:12-alpine
+	docker run --name postgres12 --network bank-network -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres:12-alpine
 
 createdb:
 # Create a database `simple_bank` with `root` as the owner.
