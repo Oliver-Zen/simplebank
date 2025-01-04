@@ -12,19 +12,22 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
-        
+
       - name: Configure AWS credentials
         # Provides AWS access within this workflow
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-2
+          aws-region: us-east-1
 
       - name: Login to Amazon ECR
         # Authenticates Docker to push/pull from ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
+      
+      - name: Load secrets and save to app.env    
+        run: aws secretsmanager get-secret-value --secret-id simple_bank --query SecretString --output text | jq --raw-output 'to_entries|map("\(.key)=\(.value)")|.[]' > app.env
 
       - name: Build, tag, and push image to Amazon ECR
         # Builds and pushes your Docker image to ECR
